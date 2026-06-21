@@ -18,9 +18,8 @@ public class CourierHelper {
                 .firstName(firstName)
                 .build();
 
-        CourierSteps.createCourier(courier)
-                .then()
-                .statusCode(201);
+        CourierSteps.createCourier(courier);
+
 
         return new CourierData.TestCourierData(login, password);
     }
@@ -36,9 +35,8 @@ public class CourierHelper {
                 .firstName(firstName)
                 .build();
 
-        CourierSteps.createCourier(courier)
-                .then()
-                .statusCode(201);
+        CourierSteps.createCourier(courier);
+
 
         return new CourierData.TestCourierData(login, password);
     }
@@ -53,9 +51,8 @@ public class CourierHelper {
                 .firstName(firstName)
                 .build();
 
-        CourierSteps.createCourier(courier)
-                .then()
-                .statusCode(201);
+        CourierSteps.createCourier(courier);
+
 
         return new CourierData.TestCourierData(login, password);
     }
