@@ -37,3 +37,14 @@ build/
 
 ### Mac OS ###
 .DS_Store
+
+# Allure
+.allure/
+allure-results/
+allure-report/
+
+# IntelliJ IDEA (дополнительно)
+.idea/
+*.iml
+*.iws
+*.ipr
