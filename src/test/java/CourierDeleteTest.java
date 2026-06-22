@@ -2,6 +2,7 @@ import data.CourierData;
 import helpers.CourierHelper;
 import steps.CourierSteps;
 import org.junit.Test;
+import static org.apache.http.HttpStatus.*;
 
 
 import static java.net.HttpURLConnection.HTTP_OK;
@@ -19,7 +20,7 @@ public class CourierDeleteTest extends BaseApiTest {
         // Логинимся и получаем id
         int courierId = CourierSteps.loginCourier(login, password)
                 .then()
-                .statusCode(200)
+                .statusCode(SC_OK)
                 .extract()
                 .path("id");
 
@@ -37,7 +38,7 @@ public class CourierDeleteTest extends BaseApiTest {
         CourierSteps.deleteCourierWithoutId()
                 .then()
                 .log().all()
-                .statusCode(404)
+                .statusCode(SC_NOT_FOUND)
                 .body("message", containsString("Not Found"));
     }
 
@@ -49,7 +50,7 @@ public class CourierDeleteTest extends BaseApiTest {
         CourierSteps.deleteCourier(nonexistentId)
                 .then()
                 .log().all()
-                .statusCode(404)
+                .statusCode(SC_NOT_FOUND)
                 .body("message", containsString("Курьера с таким id нет."));
     }
 
@@ -64,7 +65,7 @@ public class CourierDeleteTest extends BaseApiTest {
         // Логинимся и получаем id
         int courierId = CourierSteps.loginCourier(login, password)
                 .then()
-                .statusCode(200)
+                .statusCode(SC_OK)
                 .extract()
                 .path("id");
 
@@ -77,7 +78,7 @@ public class CourierDeleteTest extends BaseApiTest {
         CourierSteps.loginCourier(login, password)
                 .then()
                 .log().all()
-                .statusCode(404);
+                .statusCode(SC_NOT_FOUND);
     }
 }
 
