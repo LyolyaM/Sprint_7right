@@ -3,6 +3,9 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.After;
+import io.qameta.allure.Description;
+import io.qameta.allure.Epic;
+import io.qameta.allure.Feature;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -11,6 +14,8 @@ import java.util.List;
 import static org.apache.http.HttpStatus.*;
 import static org.hamcrest.Matchers.*;
 
+@Epic("Тестирование API Яндекс Самокат")
+@Feature("Создание заказа")
 @RunWith(Parameterized.class)
 public class CreateOrderTest extends BaseApiTest {
 
@@ -49,6 +54,7 @@ public  CreateOrderTest (List<String> colors, String testDescription) {
     }
 
     @Test
+    @Description("Проверка создания заказа с разными вариантами цветов")
     public void testCreateOrderWithColors() {
         trackNumber = OrderSteps.createOrderWithColors(colors)
                 .then()

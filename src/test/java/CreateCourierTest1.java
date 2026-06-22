@@ -4,10 +4,17 @@ import steps.CourierSteps;
 import data.CourierData;
 import org.junit.After;
 import static org.apache.http.HttpStatus.*;
+import io.qameta.allure.Description;
+import io.qameta.allure.Epic;
+import io.qameta.allure.Feature;
+import io.qameta.allure.Story;
 
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.containsString;
+
+@Epic("Тестирование API Яндекс Самокат")
+@Feature("Создание курьера")
 
 public class CreateCourierTest1 extends BaseApiTest {
     private String createdLogin;
@@ -42,6 +49,8 @@ public class CreateCourierTest1 extends BaseApiTest {
     }
 
     @Test
+    @Description("Проверка успешного создания курьера с валидными данными")
+    @Story("Позитивные тесты")
     public void testCreateCourierSuccess() {
                 CourierSteps.createRandomCourier()
                 .then()
@@ -50,6 +59,8 @@ public class CreateCourierTest1 extends BaseApiTest {
                 .body("ok", equalTo(true));
     }
     @Test
+    @Description("Проверка, что нельзя создать двух курьеров с одинаковым логином")
+    @Story("Негативные тесты")
     public void testCannotCreateDuplicateCourier() {
         // Создаём первого курьера и сохраняем логин
         String login = CourierData.generateLogin();
@@ -66,8 +77,10 @@ public class CreateCourierTest1 extends BaseApiTest {
                 .body("message", containsString("Этот логин уже используется"));
     }
 
-    //  Нет пароля (ошибка)
+
     @Test
+    @Description("Проверка ошибки при создании курьера без пароля")
+    @Story("Негативные тесты")
     public void testCreateCourierWithoutPassword() {
         CourierSteps.createCourierWithoutPassword()
                 .then()
@@ -76,8 +89,10 @@ public class CreateCourierTest1 extends BaseApiTest {
                 .body("message", containsString("Недостаточно данных"));
     }
 
-    //  Нет логина (ошибка)
+
     @Test
+    @Description("Проверка ошибки при создании курьера без логина")
+    @Story("Негативные тесты")
     public void testCreateCourierWithoutLogin() {
         CourierSteps.createCourierWithoutLogin()
                 .then()
@@ -86,8 +101,10 @@ public class CreateCourierTest1 extends BaseApiTest {
                 .body("message", containsString("Недостаточно данных"));
     }
 
-    // Нет имени (успех, так как имя не обязательно)
+
     @Test
+    @Description("Проверка успешного создания курьера без имени (имя не обязательно)")
+    @Story("Позитивные тесты")
     public void testCreateCourierWithoutFirstName() {
         // Используем основной метод, так как имя не обязательно
         CourierModel courier = CourierModel.builder()
@@ -104,8 +121,9 @@ public class CreateCourierTest1 extends BaseApiTest {
         createdPassword = courier.getPassword();
     }
 
-    //   Пустой логин (ошибка)
     @Test
+    @Description("Проверка ошибки при создании курьера с пустым логином")
+    @Story("Негативные тесты")
     public void testCreateCourierWithEmptyLogin() {
         CourierSteps.createCourierWithEmptyLogin()
                 .then()
