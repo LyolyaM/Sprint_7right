@@ -2,22 +2,51 @@ import model.CourierModel;
 import org.junit.Test;
 import steps.CourierSteps;
 import data.CourierData;
+import org.junit.After;
+import static org.apache.http.HttpStatus.*;
 
 
-import static java.net.HttpURLConnection.HTTP_CREATED;
 import static org.hamcrest.Matchers.equalTo;
-import static java.net.HttpURLConnection.HTTP_BAD_REQUEST;
-import static java.net.HttpURLConnection.HTTP_CONFLICT;
 import static org.hamcrest.Matchers.containsString;
 
 public class CreateCourierTest1 extends BaseApiTest {
+    private String createdLogin;
+    private String createdPassword;
+    private int courierId;
+
+    @After
+    public void cleanUp() {
+        if (courierId > 0) {
+            CourierSteps.deleteCourier(courierId)
+                    .then()
+                    .log().all()
+                    .statusCode(SC_OK);
+            System.out.println("Курьер удалён, ID: " + courierId);
+        } else if (createdLogin != null && createdPassword != null) {
+            try {
+                courierId = CourierSteps.loginCourier(createdLogin, createdPassword)
+                        .then()
+                        .statusCode(SC_OK)
+                        .extract()
+                        .path("id");
+                if (courierId > 0) {
+                    CourierSteps.deleteCourier(courierId)
+                            .then()
+                            .statusCode(SC_OK);
+                    System.out.println("Курьер удалён, ID: " + courierId);
+                }
+            } catch (Exception e) {
+                System.out.println("Курьер уже удалён или не найден");
+            }
+        }
+    }
 
     @Test
     public void testCreateCourierSuccess() {
                 CourierSteps.createRandomCourier()
                 .then()
                 .log().all()
-                .statusCode(HTTP_CREATED)
+                .statusCode(SC_CREATED)
                 .body("ok", equalTo(true));
     }
     @Test
@@ -27,13 +56,13 @@ public class CreateCourierTest1 extends BaseApiTest {
 
         CourierSteps.createCourierWithLogin(login)
                 .then()
-                .statusCode(HTTP_CREATED);
-
+                .statusCode(SC_CREATED);
+        createdLogin = login;
         // Пытаемся создать второго с ТЕМ ЖЕ логином
         CourierSteps.createCourierWithLogin(login)
                 .then()
                 .log().all()
-                .statusCode(HTTP_CONFLICT)
+                .statusCode(SC_CONFLICT)
                 .body("message", containsString("Этот логин уже используется"));
     }
 
@@ -43,7 +72,7 @@ public class CreateCourierTest1 extends BaseApiTest {
         CourierSteps.createCourierWithoutPassword()
                 .then()
                 .log().all()
-                .statusCode(HTTP_BAD_REQUEST)
+                .statusCode(SC_BAD_REQUEST)
                 .body("message", containsString("Недостаточно данных"));
     }
 
@@ -53,7 +82,7 @@ public class CreateCourierTest1 extends BaseApiTest {
         CourierSteps.createCourierWithoutLogin()
                 .then()
                 .log().all()
-                .statusCode(HTTP_BAD_REQUEST)
+                .statusCode(SC_BAD_REQUEST)
                 .body("message", containsString("Недостаточно данных"));
     }
 
@@ -69,8 +98,10 @@ public class CreateCourierTest1 extends BaseApiTest {
         CourierSteps.createCourier(courier)
                 .then()
                 .log().all()
-                .statusCode(HTTP_CREATED)
+                .statusCode(SC_CREATED)
                 .body("ok", equalTo(true));
+        createdLogin = courier.getLogin();
+        createdPassword = courier.getPassword();
     }
 
     //   Пустой логин (ошибка)
@@ -79,7 +110,7 @@ public class CreateCourierTest1 extends BaseApiTest {
         CourierSteps.createCourierWithEmptyLogin()
                 .then()
                 .log().all()
-                .statusCode(HTTP_BAD_REQUEST);
+                .statusCode(SC_BAD_REQUEST);
     }
 }
 
