@@ -78,4 +78,14 @@ public class OrderSteps {
                 .then()
                 .extract().response();
     }
+    public static Response cancelOrder(int trackNumber) {
+        return given()
+                .log().all()
+                .contentType(ContentType.JSON)
+                .body("{\"track\": " + trackNumber + "}")
+                .when()
+                .put("/api/v1/orders/cancel")
+                .then()
+                .extract().response();
+    }
 }

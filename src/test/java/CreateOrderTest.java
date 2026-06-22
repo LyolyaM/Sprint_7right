@@ -2,12 +2,13 @@ import steps.OrderSteps;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
+import org.junit.After;
 
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
-import static java.net.HttpURLConnection.HTTP_CREATED;
+import static org.apache.http.HttpStatus.*;
 import static org.hamcrest.Matchers.*;
 
 @RunWith(Parameterized.class)
@@ -15,7 +16,7 @@ public class CreateOrderTest extends BaseApiTest {
 
     private final List<String> colors;
     private final String testDescription;
-
+    private int trackNumber;
 
 public  CreateOrderTest (List<String> colors, String testDescription) {
         this.colors = colors;
@@ -33,13 +34,30 @@ public  CreateOrderTest (List<String> colors, String testDescription) {
         });
     }
 
+    @After
+    public void cleanUp() {
+        if (trackNumber > 0) {
+            System.out.println("Заказ создан, track: " + trackNumber + " (очистка отключена)");
+            // Временно отключено из-за бага ручки /api/v1/orders/cancel (возвращает 404)
+            //OrderSteps.cancelOrder(trackNumber)
+                //    .then()
+                //    .log().all()
+                 //   .statusCode(SC_OK)
+                  //  .body("ok", equalTo(true));
+          //  System.out.println("Заказ отменён, track: " + trackNumber);
+        }
+    }
+
     @Test
     public void testCreateOrderWithColors() {
-        OrderSteps.createOrderWithColors(colors)
+        trackNumber = OrderSteps.createOrderWithColors(colors)
                 .then()
                 .log().all()
-                .statusCode(HTTP_CREATED)           // 201 Created
+                .statusCode(SC_CREATED)           // 201 Created
                 .body("track", notNullValue())      // track есть
-                .body("track", instanceOf(Integer.class)); // track это число
+                .body("track", instanceOf(Integer.class)) // track это число
+                .extract()
+                .path("track");
     }
+
 }
